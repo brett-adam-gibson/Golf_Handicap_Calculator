@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'style.css' %}"> 
+    <title>Add Course/Tee's</title>
+</head>
+<body>
+    <<nav>
+        <h2>Welcome {{ user.first_name }} {{ user.last_name }}</h2>
+        <a href="/hcp/" role="button" class="btn btn-primary">Back</a>
+        <a href="/">Log off</a>
+    </nav>
+    <hr>
+    <br>
+    <div>
+        <section class="col-md-12">
+            <h2>Add new Course</h2>
+            <form action="/hcp/add_course/" method="POST">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="name">Course Name:</label>
+                    <input type="text" name="name" id="name" class="form-control">
+                </div>
+                <button class="btn btn-primary">Submit</button>
+            </form>
+        </section>
+    </div>
+    <br>
+    <div>
+        <section class="col-md-12">
+            <h2>Add new Tee</h2>
+            <form action="/hcp/add_tee/" method="POST">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="course">Course:</label>
+                    <select name="course" id="course">
+                        {% for course in courses %}
+                        <option value="{{course.id}}">{{course.name}}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="teeName">Tee Name/Color:</label>
+                    <input type="text" name="teeName" id="teeName" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label for="rating">Rating:</label>
+                    <input type="text" name="rating" id="rating" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label for="slope">Slope:</label>
+                    <input type="text" name="slope" id="slope" class="form-control">
+                </div>
+                <button class="btn btn-primary">Submit</button>
+            </form>
+        </section>
+    </div>
+    <hr>
+    <div>
+        <section class="col-md-12">
+            <h2>Current Known Courses:</h2>
+            <table class="table table-dark table-striped">
+                <thead>
+                    <tr>
+                        <th>Course</th>
+                        <th>Tee</th>
+                        <th>Rating</th>
+                        <th>Slope</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for tee in tees %}
+                    <tr>
+                        <td>{{ tee.course }}</td>
+                        <td>{{ tee.teeName }}</td>
+                        <td>{{ tee.rating }}</td>
+                        <td>{{ tee.slope }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </section>
+    </div>  
+    <br>
+    <br>   
+</body>
+</html>

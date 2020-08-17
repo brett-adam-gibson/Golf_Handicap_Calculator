@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'style.css' %}">
+    <script defer src="{% static 'script.js' %}"></script>
+    <script defer src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script> 
+    <title>Handicap Dashboard</title>
+</head>
+<body>
+    <<nav>
+        <h2>Welcome {{ user.first_name }} {{ user.last_name }}</h2>
+        <a href="/hcp/new_course/" role="button" class="btn btn-primary">Add a new Course or Tee's</a>
+        <a href="/">Log off</a>
+    </nav>
+    <hr>
+    <br>
+    <div>
+        <section class="col-md-12">
+            <h2>Your current Handicap is:</h2>
+            <h2> {{ handicap.handicap_index }}</h2>
+        </section>
+    </div>
+    <hr>
+    <br>
+    <div>
+        <section class="col-md-12">
+            <h2> Post a score:</h2>
+            <form action="/hcp/post_a_round/" method="POST">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="date">Date:</label>
+                    <input type="date" name="date" id="date" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label for="tee">Course:</label><br>
+                    <select name="course" id="course">
+                    
+                    </select>
+                </div>
+                <div class="form-group">
+                    <select name="tee" id="tee">
+                    
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="score">Score:</label>
+                    <input type="text" name="score" class="form-control">
+                </div>
+                <button class="btn btn-primary">Submit</button>
+            </form>
+        </section>
+    </div>
+    <hr>
+    <br>
+    <div>
+        <section class="col-md-12">
+            <h3>History:</h3>
+            <table class="table table-dark table-striped">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Course/Tee</th>
+                        <th>Score</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for score in scores reversed %}
+                    <tr>
+                        <td>{{ score.date }}</td>
+                        <td>{{ score.tee }}</td>
+                        <td>{{ score.score }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </section>
+    </div>
+     <script>
+        var courses = {};
+        {% for course in courses %}
+            courses["{{ course }}"] = [];
+            {% for tee in tees %}
+                {% if course == tee.course %}
+                    courses["{{ course }}"].push({id:"{{tee.id}}",name:"{{tee.teeName}}"});
+                {% endif%}
+            {% endfor %}
+        {% endfor %}
+
+        var coursesDropdown = document.getElementById("course");
+        coursesDropdown.addEventListener("change", renderTees);
+
+        for (const course in courses) {
+            var option = document.createElement("option");
+            option.text = course;
+            coursesDropdown.add(option);
+        }
+
+        var initCourse = coursesDropdown.options[coursesDropdown.selectedIndex].value;
+        var teesDropdown = document.getElementById("tee");
+
+        courses[initCourse].forEach(function (tee) {
+            var option = document.createElement("option");
+            option.text = tee.name;
+            option.value = tee.id;
+            teesDropdown.add(option);
+        });
+
+        function renderTees(event) {
+            teesDropdown.innerHTML = '';
+            var tees = courses[event.target.value];
+            tees.forEach(function (tee) {
+            var option = document.createElement("option");
+            option.text = tee.name;
+            option.value = tee.id
+            teesDropdown.add(option);
+            })
+        }
+    </script>
+</body>
+</html>
